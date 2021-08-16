@@ -1,0 +1,75 @@
+# *** Create Secret to store mongodb creds
+# mongodb admin creds
+# base 64 value has to be used
+# echo -n  "username"| base64 dXNlcm5hbWU=
+# echo -n  "password"| base64 cGFzc3dvcmQ=
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongodb-secret
+type: Opaque
+data:
+  mongo-root-username: dXNlcm5hbWU=
+  mongo-root-password: cGFzc3dvcmQ=
+---
+# *** Create mongoDB deployment
+# 
+# get port number and env variables from docker site
+# https://hub.docker.com/_/mongo
+# default MongoDB port: 27017
+# env
+# MONGO_INITDB_ROOT_USERNAME: username
+# MONGO_INITDB_ROOT_PASSWORD: password
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-dep
+  labels:
+    app: mongodb-dep
+spec:
+  selector:
+    matchLabels:
+      app: mongodb-pod
+  replicas: 1
+  template:
+    metadata:
+      name: mongodb-pod
+      labels:
+        app: mongodb-pod
+    spec:
+      containers:
+      - name: mongodb-container
+        image: mongo
+        ports:
+        - name: mangodb-port
+          containerPort: 27017
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: mongo-root-username
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mongodb-secret
+              key: mongo-root-password
+---
+# *** create mongodb service (internal service)
+# this service will be accessible only inside cluster
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-svc
+  labels:
+    app: mongodb-svc
+spec:
+  selector:
+    app: mongodb-pod
+  ports:
+  - name: httpport
+    protocol: TCP
+    port: 27017
+    targetPort: mangodb-port
