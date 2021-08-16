@@ -1,0 +1,16 @@
+## ** create nginx internal service using cluster IP 
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-svc
+  labels:
+    app: nginx-svc
+spec:
+  ports:
+  - name: web
+    port: 80
+    targetPort: nginx-pod-port
+    protocol: TCP
+  selector:
+    app: nginx-pod
+    
