@@ -13,8 +13,6 @@ spec:
   - host: "myapps.com"
     http:
       paths:
-      - pathType: Prefix
-        path: "/nginx"
         backend:
           serviceName: nginx-svc
           servicePort: 80
