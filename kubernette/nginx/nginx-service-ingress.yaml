@@ -16,8 +16,6 @@ spec:
       - pathType: Prefix
         path: "/nginx"
         backend:
-          service:
-            name: nginx-svc
-            port:
-              number: 80
+          serviceName: nginx-svc
+          servicePort: 80
     
