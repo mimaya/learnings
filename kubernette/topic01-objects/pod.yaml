@@ -1,0 +1,11 @@
+## create pod with one nginx container
+apiVersion: v1
+  kind: Pod
+  metadata:
+    name: my-first-app
+    labels:
+      app: nginx-pod
+  spec:
+    containers:
+      - name: nginx
+        image: nginx
