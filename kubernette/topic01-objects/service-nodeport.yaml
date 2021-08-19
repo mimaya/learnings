@@ -44,7 +44,7 @@ spec:
   type: NodePort
   ports:
   - name: nginxsvc-node-port
-    nodePort: 8080
+    nodePort: 30001
     port: 80
     targetPort: nginx-http-port
     protocol: TCP
