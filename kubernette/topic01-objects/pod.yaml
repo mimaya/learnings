@@ -19,7 +19,6 @@
 ## Accept-Ranges: bytes
 ## 
 ## root@nginx-pod:/# exit
-
         
 apiVersion: v1
 kind: Pod
