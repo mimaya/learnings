@@ -43,7 +43,7 @@ metadata:
 spec:
   ports:
   - name: nginxsvc-cluster-port
-    port: 80
+    port: 8080
     targetPort: nginx-http-port
     protocol: TCP
   selector:
