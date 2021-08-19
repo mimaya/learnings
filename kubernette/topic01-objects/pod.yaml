@@ -33,4 +33,5 @@ spec:
       ports:
         - name: nginx-http-port
           containerPort: 80
-          protocol: TCP        
+          protocol: TCP    
+          
