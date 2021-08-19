@@ -44,6 +44,7 @@ spec:
   type: LoadBalancer
   ports:
   - name: nginxsvc-lb-port
+    nodePort: 30001
     port: 80
     targetPort: nginx-http-port
     protocol: TCP
