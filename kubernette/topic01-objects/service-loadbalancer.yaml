@@ -35,15 +35,15 @@
 ##  
 
 apiVersion: v1
-kind: NodePort
+kind: Service
 metadata:
-  name: nginxsvc-nodeport
+  name: nginxsvc-lb
   labels:
-    app: nginxsvc-nodeport
+    app: nginxsvc-lb
 spec:
+  type: LoadBalancer
   ports:
-  - name: nginxsvc-node-port
-    nodePort: 8080
+  - name: nginxsvc-lb-port
     port: 80
     targetPort: nginx-http-port
     protocol: TCP
