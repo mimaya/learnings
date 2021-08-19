@@ -1,13 +1,37 @@
-## create pod with one nginx container
+## POD:
+## 1. pod is basic unit of kubernete
+## 2. if pods dies it will not automatically create new one
+##
+## controlplane $ kubectl get pods
+## NAME                          READY   STATUS        RESTARTS   AGE
+## nginx-pod                     1/1     Running       0          4m52s
+##
+## controlplane $ kubectl exec nginx-pod -it -- /bin/bash 
+## root@nginx-pod:/# curl -I localhost
+## HTTP/1.1 200 OK
+## Server: nginx/1.21.1
+## Date: Wed, 18 Aug 2021 16:24:20 GMT
+## Content-Type: text/html
+## Content-Length: 612
+## Last-Modified: Tue, 06 Jul 2021 14:59:17 GMT
+## Connection: keep-alive
+## ETag: "60e46fc5-264"
+## Accept-Ranges: bytes
+## 
+## root@nginx-pod:/# exit
+
+        
 apiVersion: v1
-  kind: Pod
-  metadata:
-    labels:
-      app: nginx-pod
-  spec:
-    containers:
-      - name: nginx
-        image: nginx
-        ports:
-        - containerPort: 80
-          name: nginx-pod-port
+kind: Pod
+metadata:
+  name: nginx-pod
+  labels:
+    app: nginx-pod
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      ports:
+        - name: nginx-http-port
+          containerPort: 80
+          protocol: TCP        

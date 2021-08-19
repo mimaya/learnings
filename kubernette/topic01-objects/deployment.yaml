@@ -1,0 +1,61 @@
+## Deployment:
+## 1. deployment is higher level abstraction of pod and replicaset
+## 2. if pods dies it will not automatically create new one
+## 3. match actual number of replicas with desired number
+## 4. can do rolling upgrade. both older vs and new version can co exist
+##    image: nginx:1.14.1 ->  image: nginx:1.15.1
+##
+## controlplane $ vim deployment.yaml 
+## controlplane $ echo "deploy nginx:1.14.1"
+## 
+## controlplane $ kubectl apply  -f deployment.yaml ; kubectl get pods --watch
+## deployment.apps/nginx-deployment created
+## NAME                               READY   STATUS    RESTARTS   AGE
+## nginx-deployment-97c9c5bfc-7m6ml   0/1     Pending   0          0s
+## nginx-deployment-97c9c5bfc-8zk9q   0/1     Pending   0          0s
+## nginx-deployment-97c9c5bfc-7m6ml   0/1     ContainerCreating   0          0s
+## nginx-deployment-97c9c5bfc-8zk9q   0/1     ContainerCreating   0          0s
+## nginx-deployment-97c9c5bfc-7m6ml   1/1     Running             0          2s
+## nginx-deployment-97c9c5bfc-8zk9q   1/1     Running             0          2s
+## 
+## controlplane $ echo "upgrade nginx:1.15.1"
+## controlplane $ vim deployment.yaml  
+## controlplane $ kubectl apply  -f deployment.yaml ; kubectl get pods --watch
+## deployment.apps/nginx-deployment configured
+## NAME                                READY   STATUS    RESTARTS   AGE
+## nginx-deployment-789cbbc586-bhvkr   0/1     Pending   0          0s
+## nginx-deployment-97c9c5bfc-7m6ml    1/1     Running   0          54s
+## nginx-deployment-97c9c5bfc-8zk9q    1/1     Running   0          54s
+## nginx-deployment-789cbbc586-bhvkr   0/1     ContainerCreating   0          0s
+## nginx-deployment-789cbbc586-bhvkr   1/1     Running             0          3s
+## nginx-deployment-97c9c5bfc-7m6ml    1/1     Terminating         0          57s
+## nginx-deployment-789cbbc586-s7zbb   0/1     Pending             0          0s
+## nginx-deployment-789cbbc586-s7zbb   0/1     ContainerCreating   0          0s
+## nginx-deployment-97c9c5bfc-7m6ml    0/1     Terminating         0          58s
+## nginx-deployment-789cbbc586-s7zbb   1/1     Running             0          2s
+## nginx-deployment-97c9c5bfc-8zk9q    1/1     Terminating         0          61s
+## nginx-deployment-97c9c5bfc-7m6ml    0/1     Terminating         0          63s
+## nginx-deployment-97c9c5bfc-8zk9q    0/1     Terminating         0          64s
+## 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx-pod
+  replicas: 3
+  template:  
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx-pod
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - name: nginx-http-port
+          containerPort: 80
+          protocol: TCP        

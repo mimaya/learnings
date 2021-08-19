@@ -1,0 +1,49 @@
+## ReplicaSet:
+## 1. ReplicaSet is group of pods, higher level abstraction of pod
+## 2. if pods dies it will automatically create new one
+## 3. match actual number of replicas with desired number
+## 4. can not do rolling upgrade. entrire rs has to be deleted and upgrade to newer version\\
+##    image: nginx:1.14.1 ->  image: nginx:1.15.1
+##
+## controlplane $ kubectl apply  -f rs.yaml 
+## replicaset.apps/nginx-rs unchanged
+## controlplane $ kubectl get rs
+## NAME       DESIRED   CURRENT   READY   AGE
+## nginx-rs   3         3         3       57s
+##
+## controlplane $ kubectl get pods
+## NAME             READY   STATUS    RESTARTS   AGE
+## nginx-rs-4c9zn   1/1     Running   0          61s
+## nginx-rs-6rq82   1/1     Running   0          61s
+## nginx-rs-l6x7d   1/1     Running   0          61s
+## controlplane $ kubectl delete pod nginx-rs-4c9zn
+## pod "nginx-rs-4c9zn" deleted
+## 
+## controlplane $ kubectl get pods
+## NAME             READY   STATUS    RESTARTS   AGE
+## nginx-rs-4h2lt   1/1     Running   0          18s
+## nginx-rs-6rq82   1/1     Running   0          95s
+## nginx-rs-l6x7d   1/1     Running   0          95s
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-rs
+spec:
+  selector:
+    matchLabels:
+      app: nginx-pod
+  replicas: 3
+  template:  
+    metadata:
+      name: nginx-pod
+      labels:
+        app: nginx-pod
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - name: nginx-http-port
+          containerPort: 80
+          protocol: TCP        

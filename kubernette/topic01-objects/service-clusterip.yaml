@@ -1,0 +1,50 @@
+## Service:
+## 1. service is to expose a service running in a pod to outside (other pods, node, etc)
+## 
+## ClusterIP: 
+##   cluster ip expose service to cluster , all pods in the cluster can access
+##
+## controlplane $ echo "deploy nginx:1.14.1"
+## 
+## controlplane $ kubectl apply -f deployment.yaml 
+## deployment.apps/nginx-deployment 
+##
+## controlplane $ kubectl apply -f service-clusterip.yaml                                        service/nginxsvc-cluster unchanged
+## controlplane $ kubectl get service                                                            NAME               TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+##
+## kubernetes         ClusterIP   10.96.0.1       <none>        443/TCP   40m
+## nginxsvc-cluster   ClusterIP   10.109.160.45   <none>        80/TCP    86s
+##
+## controlplane $ kubectl run -i --tty busybox --image=radial/busyboxplus --restart=Never        If you don't see a command prompt, try pressing enter.
+## / # curl -I 10.109.160.45
+## HTTP/1.1 200 OK
+## Server: nginx/1.21.1
+## Date: Thu, 19 Aug 2021 06:06:18 GMT
+## Content-Type: text/html
+## Content-Length: 612
+## Last-Modified: Tue, 06 Jul 2021 14:59:17 GMT
+## Connection: keep-alive
+## ETag: "60e46fc5-264"
+## Accept-Ranges: bytes
+## 
+## / # exit
+## controlplane $ kubectl delete -f service-clusterip.yaml 
+## service "nginxsvc-cluster" deleted
+## controlplane $ kubectl delete -f deployment.yaml 
+## deployment.apps "nginx-deployment" deleted
+##  
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginxsvc-cluster
+  labels:
+    app: nginxsvc-cluster
+spec:
+  ports:
+  - name: nginxsvc-cluster-port
+    port: 80
+    targetPort: nginx-http-port
+    protocol: TCP
+  selector:
+    app: nginx-pod
