@@ -40,23 +40,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: echoserver-deployment-1
 spec:
   selector:
     matchLabels:
-      app: nginx-pod
+      app: echo-server1
   replicas: 2
   template:  
     metadata:
-      name: nginx-pod
+      name: echo-server1
       labels:
-        app: nginx-pod
+        app: echo-server1
     spec:
       containers:
-      - name: nginx
-        image: nginx:stable
-        ports:
-        - name: nginx-http-port
-          containerPort: 80
-          protocol: TCP     
+        - name: echo-server
+          image: hashicorp/http-echo
+          imagePullPolicy: IfNotPresent
+          args:
+            - -listen=:8080
+            - -text="hello world - Service1"  
           
